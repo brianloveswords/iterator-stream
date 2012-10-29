@@ -5,7 +5,7 @@ An adapter for turning an iterator into a streaming iterator.
 # Installation
 
 ```bash
-npm install iterator-stream
+$ npm install iterator-stream
 ```
 
 # Usage
