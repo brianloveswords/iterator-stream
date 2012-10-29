@@ -3,6 +3,8 @@ var Stream = require('stream');
 
 function alwaysTrue() { return true };
 function IterStream(iter, options) {
+  this.buffer = '';
+  this.bufferSize = options.bufferSize || 0;
   this.condition = options.condition || alwaysTrue;
   this.format = options.format || '%s';
   this.separator = typeof options.separator === 'undefined'
@@ -27,15 +29,29 @@ IterStream.prototype.resume = function resume() {
   while (!this.paused && (data = this.iter.next()) && this.condition(data)) {
     formatted = this.formatOutput(data);
     formatted += this.separator;
-    this.emit('data', formatted);
+    this.emitDataEvent(formatted);
   }
   if (data === null || !this.condition(data))
-    this.emit('end');
+    this.emitEndEvent();
 };
 IterStream.prototype.formatOutput = function formatOutput(data) {
   return util.format(this.format, data);
 };
-
+IterStream.prototype.emitDataEvent = function emitDataEvent(data) {
+  this.bytesSent += data.length;
+  this.buffer += data;
+  if (this.buffer.length >= this.bufferSize) {
+    this.emit('data', this.buffer);
+    this.buffer = '';
+  }
+};
+IterStream.prototype.emitEndEvent = function emitEndEvent() {
+  if (this.buffer.length) {
+    this.emit('data', this.buffer);
+    this.buffer = '';
+  }
+  this.emit('end');
+};
 module.exports = function iterstreamAdapter(iter, options) {
   options = options || {};
   return new IterStream(iter, options);

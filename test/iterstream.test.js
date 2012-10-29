@@ -57,3 +57,14 @@ test('additional condition', function (t) {
     t.end();
   });
 });
+
+test('buffering stuff', function (t) {
+  var str = StreamString();
+  iterstream(fib(), {
+    bufferSize: 8192
+  }).pipe(str).once('end', function () {
+    t.ok(str.events[0].size >= 8192, 'should have buffered the send');
+    t.same(str.value.indexOf('1.3069892237633987e+308\n'), 32907, 'should have the last event');
+    t.end();
+  });
+});
