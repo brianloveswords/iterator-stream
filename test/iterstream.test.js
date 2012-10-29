@@ -9,9 +9,7 @@ var natural = iterators.natural();
 
 test('testing regular ol ABCs', function (t) {
   var str = StreamString();
-  var istream = iterstream(letter);
-  istream.pipe(str);
-  istream.once('end', function () {
+  iterstream(letter).pipe(str).once('end', function () {
     t.same(str.value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
     t.end();
   });

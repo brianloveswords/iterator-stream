@@ -8,7 +8,7 @@ util.inherits(IterStream, Stream);
 
 IterStream.prototype.pipe = function pipe(endpoint) {
   process.nextTick(this.resume.bind(this));
-  Stream.prototype.pipe.call(this, endpoint);
+  return Stream.prototype.pipe.call(this, endpoint);
 };
 IterStream.prototype.pause = function pause() {
   this.paused = true;

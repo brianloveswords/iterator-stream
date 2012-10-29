@@ -11,5 +11,6 @@ StreamString.prototype.write = function write(str) {
 };
 StreamString.prototype.end = function end(str) {
   this.write(str || '');
+  this.emit('end');
 };
 module.exports = function () { return new StreamString };
