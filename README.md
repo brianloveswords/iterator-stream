@@ -27,10 +27,6 @@ stream to emit an `error` event.
 
 ## Advanced Usage
 
-```
-itstream(iterator, options);
-```
-
 ### Options
 - `separator`: A string added to the end of each computation before
   emitting. Defaults to `\n'`. Pass `null` to disable.
@@ -47,3 +43,25 @@ itstream(iterator, options);
   and an `end` event will be emitted. Useful for infinite iterators.
 - `iterations`: Maximum number of iterations to go through before
   `end`ing. Defaults to Infinity.
+
+### Example
+
+```js
+var stream = itstream(iterator, {
+  separator: '|' // use a pipe instead of newline,
+  format: '%s!!' // get real excited about it
+  bufferSize: 8*1024 // buffer 8kb before sending
+  condition: function(value) {
+    return value < Infinity
+  },
+  iterations: 1476 // stop after 1476 iterations or if the value is infinity
+});
+
+// note that iteration will not start until the next tick after piping,
+// so it's safe to set this up before any callbacks
+
+setTimeout(function(){
+  stream.pipe(process.stdout);
+}, 2500);
+```
+
