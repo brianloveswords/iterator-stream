@@ -2,6 +2,9 @@ var util = require('util');
 var Stream = require('stream');
 
 function IterStream(iter, options) {
+  this.format = options.format || '%s';
+  if (typeof this.format === 'function')
+    this.formatOutput = this.format;
   this.iter = iter;
 }
 util.inherits(IterStream, Stream);
@@ -15,15 +18,19 @@ IterStream.prototype.pause = function pause() {
 };
 IterStream.prototype.resume = function resume() {
   this.paused = false;
-  var data;
+  var data, formatted;
   while (!this.paused && (data = this.iter.next())) {
-    this.emit('data', data.toString());
+    formatted = this.formatOutput(data);
+    this.emit('data', formatted);
   }
   if (data === null)
     this.emit('end');
 };
+IterStream.prototype.formatOutput = function formatOutput(data) {
+  return util.format(this.format, data);
+};
 
 module.exports = function iterstreamAdapter(iter, options) {
   options = options || {};
-  return new IterStream(iter);
+  return new IterStream(iter, options);
 };
