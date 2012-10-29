@@ -47,3 +47,13 @@ test('record separator', function (t) {
     t.end();
   });
 });
+
+test('additional condition', function (t) {
+  var str = StreamString();
+  iterstream(letter(), {
+    condition: function (value) { return value < 'D'; }
+  }).pipe(str).once('end', function () {
+    t.same(str.value, 'A\nB\nC\n');
+    t.end();
+  });
+});

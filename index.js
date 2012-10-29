@@ -1,7 +1,9 @@
 var util = require('util');
 var Stream = require('stream');
 
+function alwaysTrue() { return true };
 function IterStream(iter, options) {
+  this.condition = options.condition || alwaysTrue;
   this.format = options.format || '%s';
   this.separator = typeof options.separator === 'undefined'
     ? '\n'
@@ -22,12 +24,12 @@ IterStream.prototype.pause = function pause() {
 IterStream.prototype.resume = function resume() {
   this.paused = false;
   var data, formatted;
-  while (!this.paused && (data = this.iter.next())) {
+  while (!this.paused && (data = this.iter.next()) && this.condition(data)) {
     formatted = this.formatOutput(data);
     formatted += this.separator;
     this.emit('data', formatted);
   }
-  if (data === null)
+  if (data === null || !this.condition(data))
     this.emit('end');
 };
 IterStream.prototype.formatOutput = function formatOutput(data) {
