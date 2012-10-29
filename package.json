@@ -1,6 +1,6 @@
 {
   "name": "iterator-stream",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An adapter for making any iterator streaming",
   "main": "index.js",
   "directories": {
