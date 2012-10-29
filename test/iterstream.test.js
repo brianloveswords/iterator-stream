@@ -6,6 +6,7 @@ var StreamString = require('./streamstring');
 var fib = iterators.fib;
 var letter = iterators.letter;
 var natural = iterators.natural;
+var falsey = iterators.falsey;
 
 test('testing regular ol ABCs', function (t) {
   var str = StreamString();
@@ -65,6 +66,16 @@ test('buffering stuff', function (t) {
   }).pipe(str).once('end', function () {
     t.ok(str.events[0].size >= 8192, 'should have buffered the send');
     t.same(str.value.indexOf('1.3069892237633987e+308\n'), 32907, 'should have the last event');
+    t.end();
+  });
+});
+
+test('iterations option', function (t) {
+  var str = StreamString();
+  iterstream(falsey(), {
+    iterations: 10
+  }).pipe(str).once('end', function () {
+    t.same(str.events.length, 10, 'should have ten events');
     t.end();
   });
 });

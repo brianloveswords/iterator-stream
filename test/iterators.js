@@ -32,3 +32,12 @@ exports.natural = function naturalNumbers() {
   natural.next = natural;
   return natural;
 };
+exports.falsey = function falseyGenerator() {
+  var values = [0, '', false];
+  var n = 0;
+  function falsey() {
+    return values[n++ % 3]
+  }
+  falsey.next = falsey;
+  return falsey;
+};

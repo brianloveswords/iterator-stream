@@ -4,6 +4,7 @@ var Stream = require('stream');
 function alwaysTrue() { return true };
 function IterStream(iter, options) {
   this.buffer = '';
+  this.iterations = options.iterations || Infinity;
   this.bufferSize = options.bufferSize || 0;
   this.condition = options.condition || alwaysTrue;
   this.format = options.format || '%s';
@@ -27,14 +28,35 @@ IterStream.prototype.pause = function pause() {
 
 IterStream.prototype.resume = function resume() {
   this.paused = false;
-  var data, formatted;
-  while (!this.paused && (data = this.iter.next()) && this.condition(data)) {
+  var formatted;
+  var data = this.next();
+  while (!this.paused && this.continuable(data)) {
     formatted = this.formatOutput(data);
     formatted += this.separator;
     this.emitDataEvent(formatted);
+    data = this.next();
   }
-  if (data === null || !this.condition(data))
+  if (data === null || !this.continuable(data))
     this.emitEndEvent();
+};
+
+IterStream.prototype.continuable = function continuable(data) {
+  return data !== null && this.condition(data) && --this.iterations >= 0;
+};
+
+IterStream.prototype.next = function next() {
+  var value;
+  try {
+    value = this.iter.next();
+  } catch(err) {
+    if (err.name === 'StopIteration')
+      value = null;
+    else {
+      this.pause();
+      this.emit('error', err);
+    }
+  }
+  return value;
 };
 
 IterStream.prototype.formatOutput = function formatOutput(data) {

@@ -20,6 +20,11 @@ var natural = { n: 0, next: function() { return this.n++ } };
 itstream(natural).pipe(process.stdout); // spits out natural numbers to stdout
 ```
 
+In the case of a non-infinite iteration, `end` will be emitted when the
+iterator either returns `null` from `next()` or if `next()` throws an
+error with the name `StopIteration`. Any other errors will cause the
+stream to emit an `error` event.
+
 # Advanced Usage
 
 ```
@@ -40,3 +45,5 @@ itstream(iterator, options);
 - `condition`: An optional condition function to run against the output
   of every computation. If this check fails, no more data will be send
   and an `end` event will be emitted. Useful for infinite iterators.
+- `iterations`: Maximum number of iterations to go through before
+  `end`ing. Defaults to Infinity.
