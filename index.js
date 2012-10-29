@@ -38,19 +38,18 @@ IterStream.prototype.formatOutput = function formatOutput(data) {
   return util.format(this.format, data);
 };
 IterStream.prototype.emitDataEvent = function emitDataEvent(data) {
-  this.bytesSent += data.length;
   this.buffer += data;
-  if (this.buffer.length >= this.bufferSize) {
-    this.emit('data', this.buffer);
-    this.buffer = '';
-  }
+  if (this.buffer.length >= this.bufferSize)
+    this.emitBuffer();
 };
 IterStream.prototype.emitEndEvent = function emitEndEvent() {
-  if (this.buffer.length) {
-    this.emit('data', this.buffer);
-    this.buffer = '';
-  }
+  if (this.buffer.length)
+    this.emitBuffer();
   this.emit('end');
+};
+IterStream.prototype.emitBuffer = function sendBuffer() {
+  this.emit('data', this.buffer);
+  this.buffer = '';
 };
 module.exports = function iterstreamAdapter(iter, options) {
   options = options || {};
