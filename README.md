@@ -2,13 +2,13 @@
 
 An adapter for turning an iterator into a streaming iterator.
 
-# Installation
+## Installation
 
 ```bash
 $ npm install iterator-stream
 ```
 
-# Basic Usage
+## Basic Usage
 
 ```js
 var itstream = require('iterator-stream');
@@ -25,13 +25,13 @@ iterator either returns `null` from `next()` or if `next()` throws an
 error with the name `StopIteration`. Any other errors will cause the
 stream to emit an `error` event.
 
-# Advanced Usage
+## Advanced Usage
 
 ```
 itstream(iterator, options);
 ```
 
-## Options
+### Options
 - `separator`: A string added to the end of each computation before
   emitting. Defaults to `\n'`. Pass `null` to disable.
 - `format`: Can be a method or a format string that will be passed to
