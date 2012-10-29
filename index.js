@@ -12,7 +12,7 @@ IterStream.prototype.pipe = function pipe(endpoint) {
 };
 IterStream.prototype.pause = function pause() {
   this.paused = true;
-}
+};
 IterStream.prototype.resume = function resume() {
   this.paused = false;
   var data;

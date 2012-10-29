@@ -16,9 +16,9 @@ exports.letter = function letterGenerator() {
   var code = 65;
   var Z = 90;
   function letter() {
-    var chr = String.fromCharCode(code++);
     if (code > 90)
       return null;
+    var chr = String.fromCharCode(code++);
     return chr;
   }
   letter.next = letter;
