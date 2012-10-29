@@ -3,6 +3,9 @@ var Stream = require('stream');
 
 function IterStream(iter, options) {
   this.format = options.format || '%s';
+  this.separator = typeof options.separator === 'undefined'
+    ? '\n'
+    : (options.separator || '');
   if (typeof this.format === 'function')
     this.formatOutput = this.format;
   this.iter = iter;
@@ -21,6 +24,7 @@ IterStream.prototype.resume = function resume() {
   var data, formatted;
   while (!this.paused && (data = this.iter.next())) {
     formatted = this.formatOutput(data);
+    formatted += this.separator;
     this.emit('data', formatted);
   }
   if (data === null)
