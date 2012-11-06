@@ -1,4 +1,4 @@
-# IteratorStream [![Build Status](https://secure.travis-ci.org/brianloveswords/iterator-stream.png)](http://travis-ci.org/brianloveswords/iterator-stream)
+# IteratorStream v0.4.0 [![Build Status](https://secure.travis-ci.org/brianloveswords/iterator-stream.png)](http://travis-ci.org/brianloveswords/iterator-stream)
 
 An adapter for turning an iterator into a streaming iterator.
 
@@ -31,7 +31,7 @@ Note that it doesn't have to call `next()`! See `method` below.
 
 ### Options
 - `separator`: A string added to the end of each computation before
-  emitting. Defaults to `\n'`. Pass `null` to disable.
+  emitting. 
 - `format`: Can be a method or a format string that will be passed to
   `util.format`. Defaults to `'%s'`. If given a function, it will be
   called like `formatFn(value)` where value is the raw output of the
@@ -40,15 +40,23 @@ Note that it doesn't have to call `next()`! See `method` below.
   computed. If the resulting computations are small, this could be
   inefficient. If you pass a `bufferSize`, it will buffer **at least**
   that many bytes before emitting a data event.
-- `condition`: An optional condition function to run against the output
+- `takeWhile`: An optional condition function to run against the output
   of every computation. If this check fails, no more data will be send
   and an `end` event will be emitted. Useful for infinite iterators.
 - `iterations`: Maximum number of iterations to go through before
-  `end`ing. Defaults to Infinity.
+  `end`ing.
+- `take`: How many items to take before calling it quits. This is
+  different from `iterations` only when a `filter` is passed – `take` is
+  counted post-filter, iterations is pre-filter.
 - `method`: Name of the method to call over and over again. Defaults to
   `"next"`
 - `transform`: A method to run on every (non-null) value coming from the
-  iterator. Defaults to `function (x) { return x; }`
+  iterator. Defaults to `function (x) { return x }`
+
+#### Application Order
+```
+transform → takeWhile → filter → format
+```
 
 ### Example
 
