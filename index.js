@@ -2,18 +2,28 @@ var util = require('util');
 var Stream = require('stream');
 
 function identity(x) { return x };
+
 function alwaysTrue() { return true };
+
+function isDefined(s) {
+  return (typeof s !== undefined && s !== null && s !== '');
+}
+
 function IterStream(iter, options) {
   this.buffer = '';
   this.iterations = options.iterations || Infinity;
-  this.bufferSize = options.bufferSize || 0;
-  this.takeWhile = options.takeWhile || options.condition || alwaysTrue;
-  this.format = options.format || '%s';
+  this.take = options.take || Infinity;
+
   this.method = options.method || 'next';
+  this.bufferSize = options.bufferSize || 0;
+
+  this.takeWhile = options.takeWhile || options.condition || alwaysTrue;
   this.transform = options.transform || identity;
   this.filter = options.filter || alwaysTrue;
-  this.take = options.take || Infinity;
+
+  this.format = options.format || '%s';
   this.separator = options.separator || '';
+
   if (typeof this.format === 'function')
     this.formatOutput = this.format;
   this.iter = iter;
@@ -31,9 +41,10 @@ IterStream.prototype.pause = function pause() {
 
 IterStream.prototype.resume = function resume() {
   this.paused = false;
-  var formatted;
   var data = this.next();
-
+  var first = true;
+  var separator = this.separator;
+  var formatted;
   while (!this.paused && this.continuable(data)) {
     this.iterations--;
 
@@ -43,10 +54,12 @@ IterStream.prototype.resume = function resume() {
     }
 
     formatted = this.formatOutput(data);
-    formatted += this.separator;
+    if (!first && isDefined(separator))
+      this.emitDataEvent(this.separator);
     this.emitDataEvent(formatted);
 
     data = this.next();
+    first = false;
     this.take--;
   }
 

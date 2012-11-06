@@ -43,7 +43,7 @@ test('record separator', function (t) {
     format: '%s',
     separator: '.'
   }).pipe(str).once('end', function () {
-    t.same(str.value, 'A.B.C.D.E.F.G.H.I.J.K.L.M.N.O.P.Q.R.S.T.U.V.W.X.Y.Z.');
+    t.same(str.value, 'A.B.C.D.E.F.G.H.I.J.K.L.M.N.O.P.Q.R.S.T.U.V.W.X.Y.Z');
     t.end();
   });
 });
