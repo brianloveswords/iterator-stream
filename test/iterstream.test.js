@@ -91,3 +91,16 @@ test('method option', function (t) {
     t.end();
   });
 });
+
+test('transform option', function (t) {
+  var str = StreamString();
+  iterstream(random(), {
+    transform: function(v) { return 'hi' },
+    iterations: 3,
+    method: 'random',
+    separator: '',
+  }).pipe(str).once('end', function () {
+    t.same(str.value, 'hihihi');
+    t.end();
+  });
+});

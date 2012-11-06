@@ -1,6 +1,7 @@
 var util = require('util');
 var Stream = require('stream');
 
+function identity(x) { return x };
 function alwaysTrue() { return true };
 function IterStream(iter, options) {
   this.buffer = '';
@@ -9,6 +10,7 @@ function IterStream(iter, options) {
   this.condition = options.condition || alwaysTrue;
   this.format = options.format || '%s';
   this.method = options.method || 'next';
+  this.transform = options.transform || identity;
   this.separator = typeof options.separator === 'undefined'
     ? '\n'
     : (options.separator || '');
@@ -57,7 +59,7 @@ IterStream.prototype.next = function next() {
       this.emit('error', err);
     }
   }
-  return value;
+  return (value !== null ? this.transform(value) : null);
 };
 
 IterStream.prototype.formatOutput = function formatOutput(data) {
