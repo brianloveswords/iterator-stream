@@ -49,6 +49,7 @@ Note that it doesn't have to call `next()`! See `method` below.
   `"next"`
 - `transform`: A method to run on every (non-null) value coming from the
   iterator. Defaults to `function (x) { return x; }`
+
 ### Example
 
 ```js
