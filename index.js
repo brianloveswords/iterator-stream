@@ -13,9 +13,7 @@ function IterStream(iter, options) {
   this.transform = options.transform || identity;
   this.filter = options.filter || alwaysTrue;
   this.take = options.take || Infinity;
-  this.separator = typeof options.separator === 'undefined'
-    ? '\n'
-    : (options.separator || '');
+  this.separator = options.separator || '';
   if (typeof this.format === 'function')
     this.formatOutput = this.format;
   this.iter = iter;

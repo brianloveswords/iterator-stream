@@ -31,7 +31,7 @@ Note that it doesn't have to call `next()`! See `method` below.
 
 ### Options
 - `separator`: A string added to the end of each computation before
-  emitting. Defaults to `\n'`. Pass `null` to disable.
+  emitting. 
 - `format`: Can be a method or a format string that will be passed to
   `util.format`. Defaults to `'%s'`. If given a function, it will be
   called like `formatFn(value)` where value is the raw output of the
@@ -40,7 +40,7 @@ Note that it doesn't have to call `next()`! See `method` below.
   computed. If the resulting computations are small, this could be
   inefficient. If you pass a `bufferSize`, it will buffer **at least**
   that many bytes before emitting a data event.
-- `condition`: An optional condition function to run against the output
+- `takeWhile`: An optional condition function to run against the output
   of every computation. If this check fails, no more data will be send
   and an `end` event will be emitted. Useful for infinite iterators.
 - `iterations`: Maximum number of iterations to go through before
