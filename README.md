@@ -1,5 +1,4 @@
-# IteratorStream [![Build Status](https://secure.travis-ci.org/brianloveswords/iterator-stream.png)](http://travis-ci.org/brianloveswords/iterator-stream)
-## v0.4.0
+# IteratorStream v0.4.0 [![Build Status](https://secure.travis-ci.org/brianloveswords/iterator-stream.png)](http://travis-ci.org/brianloveswords/iterator-stream)
 
 An adapter for turning an iterator into a streaming iterator.
 
