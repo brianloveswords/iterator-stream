@@ -2,18 +2,28 @@ var util = require('util');
 var Stream = require('stream');
 
 function identity(x) { return x };
+
 function alwaysTrue() { return true };
+
+function isDefined(s) {
+  return (typeof s !== undefined && s !== null && s !== '');
+}
+
 function IterStream(iter, options) {
   this.buffer = '';
   this.iterations = options.iterations || Infinity;
-  this.bufferSize = options.bufferSize || 0;
-  this.condition = options.condition || alwaysTrue;
-  this.format = options.format || '%s';
+  this.take = options.take || Infinity;
+
   this.method = options.method || 'next';
+  this.bufferSize = options.bufferSize || 0;
+
+  this.takeWhile = options.takeWhile || options.condition || alwaysTrue;
   this.transform = options.transform || identity;
-  this.separator = typeof options.separator === 'undefined'
-    ? '\n'
-    : (options.separator || '');
+  this.filter = options.filter || alwaysTrue;
+
+  this.format = options.format || '%s';
+  this.separator = options.separator || '';
+
   if (typeof this.format === 'function')
     this.formatOutput = this.format;
   this.iter = iter;
@@ -31,24 +41,43 @@ IterStream.prototype.pause = function pause() {
 
 IterStream.prototype.resume = function resume() {
   this.paused = false;
-  var formatted;
   var data = this.next();
+  var first = true;
+  var separator = this.separator;
+  var formatted;
   while (!this.paused && this.continuable(data)) {
+    this.iterations--;
+
+    if (!this.filter(data)) {
+      data = this.next();
+      continue;
+    }
+
     formatted = this.formatOutput(data);
-    formatted += this.separator;
+    if (!first && isDefined(separator))
+      this.emitDataEvent(this.separator);
     this.emitDataEvent(formatted);
+
     data = this.next();
+    first = false;
+    this.take--;
   }
+
   if (data === null || !this.continuable(data))
     this.emitEndEvent();
 };
 
 IterStream.prototype.continuable = function continuable(data) {
-  return data !== null && this.condition(data) && --this.iterations >= 0;
+  return (
+    data !== null &&
+      this.takeWhile(data) &&
+      this.iterations > 0 &&
+      this.take > 0
+  );
 };
 
 IterStream.prototype.next = function next() {
-  var value;
+  var value, transformed;
   try {
     value = this.iter[this.method]();
   } catch(err) {
@@ -59,7 +88,11 @@ IterStream.prototype.next = function next() {
       this.emit('error', err);
     }
   }
-  return (value !== null ? this.transform(value) : null);
+  if (value === null)
+    return null;
+
+  transformed = this.transform(value);
+  return transformed;
 };
 
 IterStream.prototype.formatOutput = function formatOutput(data) {
