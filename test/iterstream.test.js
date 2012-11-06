@@ -50,10 +50,10 @@ test('record separator', function (t) {
   });
 });
 
-test('additional condition', function (t) {
+test('takeWhile', function (t) {
   var str = StreamString();
   iterstream(letter(), {
-    condition: function (value) { return value < 'D'; }
+    takeWhile: function (value) { return value < 'D'; }
   }).pipe(str).once('end', function () {
     t.same(str.value, 'A\nB\nC\n');
     t.end();
@@ -104,14 +104,26 @@ test('transform option', function (t) {
   });
 });
 
+
 test('filter option', function (t) {
   var str = StreamString();
   iterstream(natural(), {
     filter: function (v) { return v % 2 == 0 },
-    iterations: 4,
+    takeWhile: function (v) { return v <= 10 },
     separator: '',
   }).pipe(str).once('end', function () {
-    t.same(str.value, '0246');
+    t.same(str.value, '0246810');
+    t.end();
+  });
+});
+
+test('take option', function (t) {
+  var str = StreamString();
+  iterstream(natural(), {
+    take: 5,
+    separator: '',
+  }).pipe(str).once('end', function () {
+    t.same(str.value, '01234');
     t.end();
   });
 });

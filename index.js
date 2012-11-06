@@ -7,11 +7,12 @@ function IterStream(iter, options) {
   this.buffer = '';
   this.iterations = options.iterations || Infinity;
   this.bufferSize = options.bufferSize || 0;
-  this.condition = options.condition || alwaysTrue;
+  this.takeWhile = options.takeWhile || options.condition || alwaysTrue;
   this.format = options.format || '%s';
   this.method = options.method || 'next';
   this.transform = options.transform || identity;
   this.filter = options.filter || alwaysTrue;
+  this.take = options.take || Infinity;
   this.separator = typeof options.separator === 'undefined'
     ? '\n'
     : (options.separator || '');
@@ -36,6 +37,8 @@ IterStream.prototype.resume = function resume() {
   var data = this.next();
 
   while (!this.paused && this.continuable(data)) {
+    this.iterations--;
+
     if (!this.filter(data)) {
       data = this.next();
       continue;
@@ -46,7 +49,7 @@ IterStream.prototype.resume = function resume() {
     this.emitDataEvent(formatted);
 
     data = this.next();
-    this.iterations--;
+    this.take--;
   }
 
   if (data === null || !this.continuable(data))
@@ -54,7 +57,12 @@ IterStream.prototype.resume = function resume() {
 };
 
 IterStream.prototype.continuable = function continuable(data) {
-  return data !== null && this.condition(data) && this.iterations > 0;
+  return (
+    data !== null &&
+      this.takeWhile(data) &&
+      this.iterations > 0 &&
+      this.take > 0
+  );
 };
 
 IterStream.prototype.next = function next() {
