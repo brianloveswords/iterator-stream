@@ -95,6 +95,25 @@ IterStream.prototype.next = function next() {
   return transformed;
 };
 
+IterStream.prototype.fpipe = function (fn) {
+  function transform(x) { return fn(x) }
+  this.on('data', function () {
+
+  });
+  console.dir(fn);
+};
+
+/*
+
+FunctionalPipeline();
+
+stream.fpipe()
+
+fn -> fn -> fn -> fn -> fn
+*/
+
+
+
 IterStream.prototype.formatOutput = function formatOutput(data) {
   return util.format(this.format, data);
 };
