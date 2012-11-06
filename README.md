@@ -70,7 +70,7 @@ transform → takeWhile → filter → format
 
 ```js
 var stream = itstream(iterator, {
-  separator: '|' // use a pipe to separate entries
+  separator: '-' // separate entries with a dash
   format: '¡%s!' // get real excited about it
   bufferSize: 8*1024 // buffer 8kb before sending
   takeWhile: function(v) { return v < Infinity } // stop if the value hits infinity,
