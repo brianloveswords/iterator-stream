@@ -44,11 +44,14 @@ Note that it doesn't have to call `next()`! See `method` below.
   of every computation. If this check fails, no more data will be send
   and an `end` event will be emitted. Useful for infinite iterators.
 - `iterations`: Maximum number of iterations to go through before
-  `end`ing. Defaults to Infinity.
+  `end`ing.
+- `take`: How many items to take before calling it quits. This is
+  different from `iterations` only when a `filter` is passed – `take` is
+  counted post-filter, iterations is pre-filter.
 - `method`: Name of the method to call over and over again. Defaults to
   `"next"`
 - `transform`: A method to run on every (non-null) value coming from the
-  iterator. Defaults to `function (x) { return x; }`
+  iterator. Defaults to `function (x) { return x }`
 
 #### Application Order
 ```
