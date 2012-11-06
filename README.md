@@ -45,7 +45,8 @@ Note that it doesn't have to call `next()`! See `method` below.
   and an `end` event will be emitted. Useful for infinite iterators.
 - `iterations`: Maximum number of iterations to go through before
   `end`ing. Defaults to Infinity.
-- `method`: The method to call over and over again. Defaults to `next`
+- `method`: Name of the method to call over and over again. Defaults to
+  `"next"`
 
 ### Example
 
