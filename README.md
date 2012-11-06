@@ -70,13 +70,11 @@ transform → takeWhile → filter → format
 
 ```js
 var stream = itstream(iterator, {
-  separator: '|' // use a pipe instead of newline,
-  format: '%s!!' // get real excited about it
+  separator: '|' // use a pipe to separate entries
+  format: '¡%s!' // get real excited about it
   bufferSize: 8*1024 // buffer 8kb before sending
-  condition: function(value) {
-    return value < Infinity
-  },
-  iterations: 1476 // stop after 1476 iterations or if the value is infinity
+  takeWhile: function(v) { return v < Infinity } // stop if the value hits infinity,
+  iterations: 1476 // stop after 1476 iterations
 });
 
 // note that iteration will not start until the next tick after piping,
