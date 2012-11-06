@@ -94,13 +94,24 @@ test('method option', function (t) {
 
 test('transform option', function (t) {
   var str = StreamString();
-  iterstream(random(), {
-    transform: function(v) { return 'hi' },
+  iterstream(natural(), {
+    transform: function (v) { return 'hi' },
     iterations: 3,
-    method: 'random',
     separator: '',
   }).pipe(str).once('end', function () {
     t.same(str.value, 'hihihi');
+    t.end();
+  });
+});
+
+test('filter option', function (t) {
+  var str = StreamString();
+  iterstream(natural(), {
+    filter: function (v) { return v % 2 == 0 },
+    iterations: 4,
+    separator: '',
+  }).pipe(str).once('end', function () {
+    t.same(str.value, '0246');
     t.end();
   });
 });
