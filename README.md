@@ -52,7 +52,7 @@ Note that it doesn't have to call `next()`! See `method` below.
 
 #### Application Order
 ```
-transform -> takeWhile -> filter -> format
+transform → takeWhile → filter → format
 ```
 
 ### Example
