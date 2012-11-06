@@ -8,6 +8,7 @@ function IterStream(iter, options) {
   this.bufferSize = options.bufferSize || 0;
   this.condition = options.condition || alwaysTrue;
   this.format = options.format || '%s';
+  this.method = options.method || 'next';
   this.separator = typeof options.separator === 'undefined'
     ? '\n'
     : (options.separator || '');
@@ -47,7 +48,7 @@ IterStream.prototype.continuable = function continuable(data) {
 IterStream.prototype.next = function next() {
   var value;
   try {
-    value = this.iter.next();
+    value = this.iter[this.method]();
   } catch(err) {
     if (err.name === 'StopIteration')
       value = null;

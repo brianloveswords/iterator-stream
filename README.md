@@ -25,6 +25,8 @@ iterator either returns `null` from `next()` or if `next()` throws an
 error with the name `StopIteration`. Any other errors will cause the
 stream to emit an `error` event.
 
+Note that it doesn't have to call `next()`! See `method` below.
+
 ## Advanced Usage
 
 ### Options
@@ -43,6 +45,7 @@ stream to emit an `error` event.
   and an `end` event will be emitted. Useful for infinite iterators.
 - `iterations`: Maximum number of iterations to go through before
   `end`ing. Defaults to Infinity.
+- `method`: The method to call over and over again. Defaults to `next`
 
 ### Example
 
@@ -64,4 +67,3 @@ setTimeout(function(){
   stream.pipe(process.stdout);
 }, 2500);
 ```
-

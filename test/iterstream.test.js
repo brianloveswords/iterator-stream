@@ -7,6 +7,7 @@ var fib = iterators.fib;
 var letter = iterators.letter;
 var natural = iterators.natural;
 var falsey = iterators.falsey;
+var random = iterators.random;
 
 test('testing regular ol ABCs', function (t) {
   var str = StreamString();
@@ -74,6 +75,17 @@ test('iterations option', function (t) {
   var str = StreamString();
   iterstream(falsey(), {
     iterations: 10
+  }).pipe(str).once('end', function () {
+    t.same(str.events.length, 10, 'should have ten events');
+    t.end();
+  });
+});
+
+test('method option', function (t) {
+  var str = StreamString();
+  iterstream(random(), {
+    iterations: 10,
+    method: 'random',
   }).pipe(str).once('end', function () {
     t.same(str.events.length, 10, 'should have ten events');
     t.end();
