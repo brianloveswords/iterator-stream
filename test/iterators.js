@@ -41,7 +41,6 @@ exports.falsey = function falseyGenerator() {
   falsey.next = falsey;
   return falsey;
 };
-
 exports.random = function randomGenerator() {
   function random() {
     return Math.random();

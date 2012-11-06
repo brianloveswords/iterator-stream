@@ -47,7 +47,8 @@ Note that it doesn't have to call `next()`! See `method` below.
   `end`ing. Defaults to Infinity.
 - `method`: Name of the method to call over and over again. Defaults to
   `"next"`
-
+- `transform`: A method to run on every (non-null) value coming from the
+  iterator. Defaults to `function (x) { return x; }`
 ### Example
 
 ```js
