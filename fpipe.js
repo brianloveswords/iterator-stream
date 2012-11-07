@@ -1,7 +1,19 @@
 const Stream = require('stream');
 const streamProto = Stream.prototype;
 
+function pipeline(fn) {
+  var stream;
+  if (fn.pipe) // assume it's a stream
+    fn.fpipe = stream.fpipe;
+  stream = Object.create(pipelineProto);
+  stream.fn = fn;
+  stream.readable = true;
+  stream.writable = true;
+  return stream;
+};
+
 const pipelineProto = Object.create(streamProto);
+
 pipelineProto.fpipe = function fpipe(endpoint, type) {
   if (!endpoint.pipe && typeof endpoint === 'function')
     endpoint = pipeline(endpoint);
@@ -34,26 +46,41 @@ pipelineProto.send = function send() {
   this.emit.bind(this, 'data').apply(null, arguments);
 };
 
-const pipeline = function pipeline(fn) {
-  var stream;
-  if (fn.pipe) // assume it's a stream
-    fn.fpipe = stream.fpipe;
-  stream = Object.create(pipelineProto);
-  stream.fn = fn;
-  stream.readable = true;
-  stream.writable = true;
-  return stream;
-};
+pipelineProto.log =
+  pipeline.log = function log(description) {
+    return function () {
+      console.log('\n---', description, '::', arguments, '---');
+      this.send.apply(this, arguments);
+    }
+  };
 
-pipeline.disperse = function (x) {
-  x.forEach(this.send.bind(this));
-};
+pipelineProto.disperse =
+  pipeline.disperse = function disperse (x) {
+    x.forEach(this.send.bind(this));
+  };
 
-pipeline.log = function (description) {
-  return function (x) {
-    console.log('\n---', description, '::', x, '---');
-    return x;
+pipelineProto.filter =
+  pipeline.filter = function filter(conditionFn) {
+    return function () {
+      var bool = conditionFn.apply(conditionFn, arguments);
+      if (bool)
+        this.send.apply(this, arguments);
+    }
   }
-};
+
+pipelineProto.format =
+  pipeline.format = function format(fmt) {
+    return function(x) {
+      return require('util').format(fmt, x);
+    }
+  }
+
+pipelineProto.elem =
+  pipeline.elem = function elem(x) {
+    return function (obj) { return obj[x] }
+  }
+
+
+
 pipeline.logger = console.log;
 module.exports = pipeline;

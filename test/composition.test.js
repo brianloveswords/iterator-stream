@@ -59,19 +59,37 @@ function filter(conditionFn) {
 }
 
 test('pipelining', function (t) {
-  var strs = new StreamString();
-  var alaska = pipeline(databaseCall);
+  var streamstring = new StreamString();
   var expect = 'Steve!\nBill!\nRich!\nTimm!\nIlde!\nUsne!\n';
+  var alaska = pipeline(databaseCall);
   alaska
     .fpipe(pipeline.disperse)
     .fpipe(elem('first'))
     .fpipe(format('%s!\n'))
-    .fpipe(strs)
+    .fpipe(streamstring)
     .on('end', function () {
-      t.same(strs.value, expect);
+      t.same(streamstring.value, expect);
     })
   alaska.begin()
+  t.end();
+});
 
+test('pipeline filtering', function (t) {
+  var streamstring = new StreamString();
+  var expect = 'DouchemanMartinGlisdaoLados';
+  var alaska = pipeline(databaseCall);
+  alaska
+    .fpipe(alaska.disperse)
+    .fpipe(alaska.filter(function (x) {
+      return x.age > 13
+    }))
+    .fpipe(elem('last'))
+    .fpipe(format('%s'))
+    .fpipe(streamstring)
+    .on('end', function () {
+      t.same(streamstring.value, expect);
+    });
 
+  alaska.begin()
   t.end();
 });
