@@ -27,6 +27,7 @@ pipelineProto.write = function write() {
 pipelineProto.end = function end() {
   if (arguments.length)
     return this.write.apply(this, arguments);
+  this.emit('end');
 };
 
 pipelineProto.send = function send() {

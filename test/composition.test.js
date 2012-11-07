@@ -1,3 +1,4 @@
+var domain = require('domain');
 var test = require('tap').test;
 var iterators = require('./iterators');
 var istream = require('..');
@@ -33,31 +34,44 @@ function format(fmt) {
     return require('util').format(fmt, x);
   }
 }
-function filter() {  }
 
-test('pipeline basic', function (t) {
-  var DATABASE = [
-    {first: 'Steve', last: 'Doucheman', age: 44},
-    {first: 'Bill', last: 'Paxton', age: 12},
-    {first: 'Rich', last: 'Martin', age: 19},
-    {first: 'Timm', last: 'Glisdao', age: 18},
-    {first: 'Ilde', last: 'Yolsla', age: 13},
-    {first: 'Usne', last: 'Lados', age: 32},
-  ];
+var DATABASE = [
+  {first: 'Steve', last: 'Doucheman', age: 44},
+  {first: 'Bill', last: 'Paxton', age: 12},
+  {first: 'Rich', last: 'Martin', age: 19},
+  {first: 'Timm', last: 'Glisdao', age: 18},
+  {first: 'Ilde', last: 'Yolsla', age: 13},
+  {first: 'Usne', last: 'Lados', age: 32},
+];
 
-  function databaseCall(callback) {
-    process.nextTick(function () {
-      callback(null, DATABASE);
-    });
+function databaseCall(callback) {
+  process.nextTick(function () {
+    callback(null, DATABASE);
+  });
+}
+
+function filter(conditionFn) {
+  return function () {
+    var bool = conditionFn.apply(conditionFn, arguments);
+    if (bool)
+      this.send.apply(this, arguments);
   }
+}
 
+test('pipelining', function (t) {
+  var strs = new StreamString();
   var alaska = pipeline(databaseCall);
+  var expect = 'Steve!\nBill!\nRich!\nTimm!\nIlde!\nUsne!\n';
   alaska
     .fpipe(pipeline.disperse)
     .fpipe(elem('first'))
     .fpipe(format('%s!\n'))
-    .fpipe(process.stdout);
+    .fpipe(strs)
+    .on('end', function () {
+      t.same(strs.value, expect);
+    })
   alaska.begin()
+
 
   t.end();
 });
