@@ -49,7 +49,7 @@ exports.random = function randomGenerator() {
   return random;
 };
 
-// spit out 1..10, but use a bad StopIteration error.
+// spit out 0..10, but use a bad StopIteration error.
 // this is for compatibility with itertool.js
 exports.badError = function badError() {
   const err = new Error('StopIteration');
