@@ -81,7 +81,7 @@ IterStream.prototype.next = function next() {
   try {
     value = this.iter[this.method]();
   } catch(err) {
-    if (err.name === 'StopIteration')
+    if (err.name === 'StopIteration' || err.message === 'StopIteration')
       value = null;
     else {
       this.pause();

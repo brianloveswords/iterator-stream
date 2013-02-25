@@ -8,6 +8,7 @@ var letter = iterators.letter;
 var natural = iterators.natural;
 var falsey = iterators.falsey;
 var random = iterators.random;
+var badError = iterators.badError;
 
 test('testing regular ol ABCs', function (t) {
   var str = StreamString();
@@ -16,6 +17,15 @@ test('testing regular ol ABCs', function (t) {
     t.end();
   });
 });
+
+test('testing bad StopIteration subclass', function (t) {
+  var str = StreamString();
+  iterstream(badError()).pipe(str).once('end', function () {
+    t.same(str.value, '0123456789');
+    t.end();
+  });
+});
+
 
 test('formatting with a string', function (t) {
   var str = StreamString();
